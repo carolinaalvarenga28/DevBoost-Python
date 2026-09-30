@@ -262,8 +262,19 @@ class RegisterScreen(Screen):
         self.password = CustomTextInput(hint_text="Contraseña", password=True)
 
         # Botones
-        btn_register = BotonPersonalizado(text="Registrar", size_hint=(1, None), height=40)
+        btn_register = BotonPersonalizado(
+            text="Registrar",
+            size_hint=(1, None),
+            height=40
+            )
         btn_register.bind(on_press=self.registrar_usuario)
+
+        btn_volver = Button(
+            text="Volver",
+            size_hint=(1, None),
+            height=40
+)
+        btn_volver.bind(on_press=self.volver)
 
         self.in_sesion = Label(text="¿Ya tienes una cuenta")
 
