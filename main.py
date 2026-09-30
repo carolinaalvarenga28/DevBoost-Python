@@ -167,6 +167,10 @@ class BienvenidaScreen(Screen):
         self.bind(size=self.actualizar_rect, pos=self.actualizar_rect)
  
         layout = BoxLayout(orientation='vertical', spacing=20, padding=40)
+        # Imagen de DevBoost
+        logo_image = Image(source='logo.png',size_hint=(1, 0.35),allow_stretch=True,
+keep_ratio=True
+)
         layout.add_widget(Image(source='logo.png', size_hint=(1, 1), allow_stretch=True))
         layout.add_widget(Label(
             text="Bienvenido a Devboost",
@@ -354,52 +358,210 @@ class RegisterScreen(Screen):
         self.rect.size = self.size
         self.rect.pos = self.pos
 
- 
-#Pantalla de login
-class LoginScreen(Screen):
+# Pantalla de registro exitoso
+class RegistroExitosoScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+
+        # Fondo
         with self.canvas.before:
             Color(*backgroundColor)
             self.rect = Rectangle(size=self.size, pos=self.pos)
         self.bind(size=self.actualizar_rect, pos=self.actualizar_rect)
- 
-        layout = BoxLayout(orientation='vertical', padding=40, spacing=20)
-        self.username = TextInput(hint_text="Username", multiline=False, size_hint=(1, None), height=45)
-        self.password = TextInput(hint_text="Password", multiline=False, password=True, size_hint=(1, None), height=45)
- 
-        btn_login = BotonPersonalizado(text="Iniciar sesión", size_hint=(1, None), height=45)
-        btn_login.bind(on_press=self.iniciar_sesion)
- 
-        layout.add_widget(Label(text="Iniciar Sesión", font_size=24, color=MainButonColor))
-        layout.add_widget(self.username)
-        layout.add_widget(self.password)
+
+        # Layout principal
+        layout = BoxLayout(
+            orientation='vertical',
+            padding=40,
+            spacing=20
+        )
+
+        # Logo
+        logo_image = Image(
+            source='logo.png',
+            size_hint=(1, 0.4),
+            allow_stretch=True
+        )
+
+        # Título
+        titulo = Label(
+            text='¡Cuenta creada!',
+            font_size=28,
+            bold=True,
+            color=MainButonColor,
+            size_hint=(1, 0.15)
+        )
+
+        # Mensaje
+        mensaje = Label(
+            text='Tu cuenta ha sido creada correctamente.\n\n'
+                 'Ya puedes iniciar sesión y comenzar a usar DevBoost.',
+            font_size=17,
+            color=textColorDark,
+            halign='center',
+            valign='middle',
+            size_hint=(1, 0.25)
+        )
+
+        mensaje.bind(
+            size=lambda instance, value:
+            setattr(instance, 'text_size', value)
+        )
+
+        # Botón
+        btn_login = BotonPersonalizado(
+            text='Ir al Login',
+            size_hint=(1, None),
+            height=50,
+            background_color=MainButonColor,
+            color=textColor
+        )
+
+        btn_login.bind(on_press=self.ir_a_login)
+
+        # Agregar elementos
+        layout.add_widget(logo_image)
+        layout.add_widget(titulo)
+        layout.add_widget(mensaje)
         layout.add_widget(btn_login)
- 
-        volver = Button(text="Volver", size_hint=(1, None), height=40)
-        volver.bind(on_press=self.volver)
-        layout.add_widget(volver)
- 
+
         self.add_widget(layout)
- 
+
+    def ir_a_login(self, instance):
+        self.manager.transition.direction = 'left'
+        self.manager.current = 'login'
+
     def actualizar_rect(self, *args):
         self.rect.size = self.size
         self.rect.pos = self.pos
+
  
+# Pantalla de Login
+class LoginScreen(Screen):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        # Fondo
+        with self.canvas.before:
+            Color(*backgroundColor)
+            self.rect = Rectangle(size=self.size, pos=self.pos)
+
+        self.bind(size=self.actualizar_rect, pos=self.actualizar_rect)
+
+        # Layout principal
+        layout = BoxLayout(
+            orientation='vertical',
+            padding=40,
+            spacing=20
+        )
+
+        # Título
+        titulo = Label(
+            text="Iniciar Sesión",
+            font_size=24,
+            color=MainButonColor,
+            size_hint=(1, None),
+            height=50
+        )
+
+        layout.add_widget(titulo)
+
+        # Cuadro del Login
+        self.login_box = BoxLayout(
+            orientation='vertical',
+            padding=20,
+            spacing=15,
+            size_hint=(1, None),
+            height=230
+        )
+
+        # Aplicar borde y fondo blanco
+        aplicar_borde_redondeado(self.login_box)
+
+        # Usuario
+        self.username = CustomTextInput(
+            hint_text="Username",
+            multiline=False,
+            size_hint=(1, None),
+            height=45
+        )
+
+        # Contraseña
+        self.password = CustomTextInput(
+            hint_text="Password",
+            multiline=False,
+            password=True,
+            size_hint=(1, None),
+            height=45
+        )
+
+        # Botón Login
+        btn_login = BotonPersonalizado(
+            text="Iniciar sesión",
+            size_hint=(1, None),
+            height=45
+        )
+
+        btn_login.bind(on_press=self.iniciar_sesion)
+
+        # Agregar elementos al cuadro
+        self.login_box.add_widget(self.username)
+        self.login_box.add_widget(self.password)
+        self.login_box.add_widget(btn_login)
+
+        # Agregar cuadro a la pantalla
+        layout.add_widget(self.login_box)
+
+        # Botón Volver
+        volver = Button(
+            text="Volver",
+            size_hint=(1, None),
+            height=40
+        )
+
+        volver.bind(on_press=self.volver)
+
+        layout.add_widget(volver)
+
+        self.add_widget(layout)
+
+    def actualizar_rect(self, *args):
+        self.rect.size = self.size
+        self.rect.pos = self.pos
+
     def iniciar_sesion(self, instance):
-        #email = self.email.text.strip()
         user = self.username.text.strip()
         pwd = self.password.text.strip()
+
         if user and pwd:
             if user in usuarios and usuarios[user] == pwd:
-                self.manager.get_screen('usuario').saludo_label.text = f"[b]¡Hola, {user}![/b]"
+                self.manager.get_screen(
+                    'usuario'
+                ).saludo_label.text = f"[b]¡Hola, {user}![/b]"
+
                 self.manager.transition.direction = 'left'
                 self.manager.current = 'level'
+
             else:
-                Popup(title="Error", content=Label(text="Usuario o contraseña incorrectos.", color=textColor), size_hint=(0.6, 0.3)).open()
+                Popup(
+                    title="Error",
+                    content=Label(
+                        text="Usuario o contraseña incorrectos.",
+                        color=textColor
+                    ),
+                    size_hint=(0.6, 0.3)
+                ).open()
+
         else:
-            Popup(title="Error", content=Label(text="Completa todos los campos.", color=textColor), size_hint=(0.6, 0.3)).open()
- 
+            Popup(
+                title="Error",
+                content=Label(
+                    text="Completa todos los campos.",
+                    color=textColor
+                ),
+                size_hint=(0.6, 0.3)
+            ).open()
+
     def volver(self, instance):
         self.manager.transition.direction = 'right'
         self.manager.current = 'seleccion'
