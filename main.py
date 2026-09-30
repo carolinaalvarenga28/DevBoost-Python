@@ -274,6 +274,7 @@ class RegisterScreen(Screen):
             size_hint=(1, None),
             height=40
 )
+        
         btn_volver.bind(on_press=self.volver)
 
         self.in_sesion = Label(text="¿Ya tienes una cuenta")
@@ -309,6 +310,10 @@ class RegisterScreen(Screen):
         # Validación de campos
         if not all([self.fullName.text, self.email.text, self.username.text, self.password.text]):
             self.mostrar_mensaje_error("Todos los campos son obligatorios")
+            return
+         # Validar que se seleccione un nivel
+        if      self.spinner.text == "Selecciona tu nivel":
+            self.mostrar_mensaje_error("Selecciona tu nivel")
             return
 
         # Verificar si el usuario ya existe
